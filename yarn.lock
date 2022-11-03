@@ -9,6 +9,13 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+"@grammyjs/hydrate@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@grammyjs/hydrate/-/hydrate-1.2.1.tgz#782800b794c8d4252bf91126736a3ff2bf2c5c6c"
+  integrity sha512-R29ZaqlGi9CItJ61C6e6gdy0Ys3Fckw2oORrfcQtJGIo0rhhc/ZPSB7Pg2EqjfcAEuBMhQyGxp+0JmzlF1wjJA==
+  dependencies:
+    abort-controller "^3.0.0"
+
 "@grammyjs/types@^2.9.1":
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-2.9.1.tgz#395d0ec2f13b805b144d7fd8dab9247ac40d5341"

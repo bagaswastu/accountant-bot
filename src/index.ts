@@ -322,9 +322,7 @@ bot.on(':text').hears(/\/category_(.+)/, async (ctx) => {
 *Category:* ${category.name}
 ${detailsStr.length > 0 ? `*Details:*\n${detailsStr}` : ''}
 
-/delete\\_category\\_${
-      category.id
-    } to delete this category and remove all related detail
+/delete\\_category\\_${category.id} to delete this category
 /update\\_category\\_${category.id} to update this category
 `,
     { parse_mode: 'MarkdownV2' }
@@ -392,6 +390,59 @@ bot.on(':text').hears(/\/update_category_(.+)/, async (ctx) => {
   selectedCategory = category;
 
   await ctx.conversation.enter('updateCategory');
+});
+
+/**
+ * Delete category and all related detail with confirmation (conversation).
+ */
+async function deleteCategory(
+  conversation: CustomConversation,
+  ctx: CustomContext
+) {
+  if (!selectedCategory) return;
+  await ctx.reply(
+    `You are about to delete category *${selectedCategory.name}*`,
+    { parse_mode: 'MarkdownV2' }
+  );
+  await ctx.reply(`
+Are you sure? Type /yes to delete or /cancel to cancel`);
+  const confirmation = await conversation.form.text();
+
+  if (confirmation === '/cancel') {
+    throw Error('Canceled');
+  }
+
+  if (confirmation === '/yes') {
+    await prisma.category.delete({
+      where: {
+        id: selectedCategory.id,
+      },
+    });
+    await ctx.reply(`Category *${selectedCategory.name}* deleted`, {
+      parse_mode: 'MarkdownV2',
+    });
+    selectedCategory = null;
+  }
+}
+
+bot.use(createConversation(deleteCategory));
+
+bot.on(':text').hears(/\/delete_category_(.+)/, async (ctx) => {
+  const categoryId = ctx.match[1];
+
+  const category = await prisma.category.findUnique({
+    where: {
+      id: categoryId,
+    },
+  });
+
+  if (!category) {
+    throw Error('Category not found');
+  }
+
+  selectedCategory = category;
+
+  await ctx.conversation.enter('deleteCategory');
 });
 
 bot.start();

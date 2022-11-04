@@ -160,7 +160,7 @@ This expense is uncategorized\\. Please categorize it by using \\= sign\\.
 });
 
 /**
- * Categorize an detail expense. If category is not found, create a new category.
+ * Categorize an detail expense. If detail not found, then create a new detail.
  *
  * Matches:
  *  {detail} = {category}
@@ -173,16 +173,11 @@ bot.on(':text').hears(/(.+) ?= ?(.+)/, async (ctx) => {
   detailName = detailName.trim().toLowerCase();
   categoryName = categoryName.trim().toLowerCase();
 
-  const detail = await prisma.detail.findUnique({
+  let detail = await prisma.detail.findUnique({
     where: {
       name: detailName,
     },
   });
-
-  // if detail is not found, then throw error
-  if (!detail) {
-    throw Error(`Detail ${detailName} not found`);
-  }
 
   let category = await prisma.category.findUnique({
     where: {
@@ -190,11 +185,17 @@ bot.on(':text').hears(/(.+) ?= ?(.+)/, async (ctx) => {
     },
   });
 
-  // if category is not found, then create a new category
+  // if category is not found, then throw error
   if (!category) {
-    category = await prisma.category.create({
+    throw Error(`Category ${categoryName} not found`);
+  }
+
+  // if detail is not found, then create detail
+  if (!detail) {
+    detail = await prisma.detail.create({
       data: {
-        name: categoryName,
+        name: detailName,
+        categoryId: category.id,
       },
     });
   }

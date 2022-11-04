@@ -243,7 +243,7 @@ bot.command('list_category', async (ctx) => {
 
   const categoriesStr = categories
     .filter((c) => c.name !== 'uncategorized')
-    .map((category) => `➣ ${category.name}`)
+    .map((category) => `➣ ${category.name} \\- /category\\_${category.id}`)
     .join('\n');
 
   await ctx.reply(
@@ -320,8 +320,7 @@ bot.on(':text').hears(/\/category_(.+)/, async (ctx) => {
   await ctx.reply(
     `
 *Category:* ${category.name}
-${detailsStr.length > 0 ? `*Details:*\n${detailsStr}` : ''}
-
+${detailsStr.length > 0 ? `*Details:*\n${detailsStr}\n` : ''}
 /delete\\_category\\_${category.id} to delete this category
 /update\\_category\\_${category.id} to update this category
 `,

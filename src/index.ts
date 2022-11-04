@@ -1,17 +1,17 @@
-import { customAlphabet } from 'nanoid';
-import { hydrate, HydrateFlavor } from '@grammyjs/hydrate';
-import { Category, Detail, PrismaClient } from '@prisma/client';
-import * as chrono from 'chrono-node';
-import { formatRelative } from 'date-fns';
-import * as dotenv from 'dotenv';
-import { Bot, Context, session } from 'grammy';
-import { formatRupiah } from './utils';
 import {
   Conversation,
   ConversationFlavor,
   conversations,
   createConversation,
 } from '@grammyjs/conversations';
+import { hydrate, HydrateFlavor } from '@grammyjs/hydrate';
+import { Category, Detail, PrismaClient } from '@prisma/client';
+import * as chrono from 'chrono-node';
+import { format } from 'date-fns';
+import * as dotenv from 'dotenv';
+import { Bot, Context, session } from 'grammy';
+import { customAlphabet } from 'nanoid';
+import { formatRupiah } from './utils';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -144,19 +144,14 @@ bot.on(':text').hears(/(\d+)(k?), ?(.+),? ?(.+)?/, async (ctx) => {
   });
 
   // date to natural date
-  const dateTimeParsed = formatRelative(expense.date, new Date());
-  const naturalDateOnly = dateTimeParsed.split(' at ')[0];
-
+  const dateTimeParsed = format(expense.date, 'dd\\-MM\\-yyyy');
   const parsedTotal = formatRupiah(parseInt(total)).replace('.', '\\.');
 
   await ctx.reply(
     `
-You spent *${parsedTotal}* on *${
-      expense.detail.Category?.name ?? 'uncategorized'
-    }*\\.
-  
-📅 *Date:* ${naturalDateOnly}
-📝 *Detail:* ${expense.detail.name}
+Sucessfully added *${detail.name}* for *${parsedTotal}* to the expense list on *${dateTimeParsed}*\\.
+
+/expense\\_${expense.id} to see more detail
   `,
     { parse_mode: 'MarkdownV2' }
   );
@@ -172,6 +167,52 @@ This expense is uncategorized\\. Please categorize it by using \\= sign\\.
       }
     );
   }
+});
+
+/**
+ * Detail expense.
+ *
+ * Matches:
+ *  /expense_{id}
+ * Example:
+ *  /expense_tb8M8gB5nWPA
+ */
+bot.on(':text').hears(/^\/expense_(.+)$/, async (ctx) => {
+  const id = ctx.match[1];
+
+  const expense = await prisma.expense.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      detail: {
+        include: {
+          Category: true,
+        },
+      },
+    },
+  });
+
+  if (!expense) {
+    await ctx.reply('Expense not found');
+    return;
+  }
+
+  const dateTimeParsed = format(expense.date, 'dd\\-MM\\-yyyy');
+  const parsedTotal = formatRupiah(expense.total).replace('.', '\\.');
+
+  await ctx.reply(
+    `
+*${expense.detail.name}* for *${parsedTotal}*\\.
+
+📅 *Date:* ${dateTimeParsed}
+🏷 *Category*: ${expense.detail.Category?.name || 'uncategorized'}
+
+/edit\\_expense\\_${expense.id} to edit this expense
+/delete\\_expense\\_${expense.id} to delete this expense
+  `,
+    { parse_mode: 'MarkdownV2' }
+  );
 });
 
 /**

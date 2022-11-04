@@ -1,3 +1,4 @@
+import { customAlphabet } from 'nanoid';
 import { hydrate, HydrateFlavor } from '@grammyjs/hydrate';
 import { Detail, PrismaClient } from '@prisma/client';
 import * as chrono from 'chrono-node';
@@ -7,6 +8,10 @@ import { Bot, Context } from 'grammy';
 import { formatRupiah } from './utils';
 
 dotenv.config();
+const nanoid = customAlphabet(
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+  12
+);
 const bot = new Bot<HydrateFlavor<Context>>(process.env.BOT_TOKEN!);
 const prisma = new PrismaClient();
 
@@ -117,6 +122,7 @@ bot.on(':text').hears(/(\d+)(k?), ?(.+), ?(.+)?/, async (ctx) => {
   // create expense
   const expense = await prisma.expense.create({
     data: {
+      id: nanoid(),
       total: parseInt(total),
       date,
       detailName: detail.name,

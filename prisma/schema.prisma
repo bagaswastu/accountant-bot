@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Category {
-  id     String   @id @default(uuid())
+  id     String   @id
   name   String   @unique
   Detail Detail[]
 }
@@ -22,7 +22,7 @@ model Detail {
 }
 
 model Expense {
-  id         String   @id @default(uuid())
+  id         String   @id
   date       DateTime
   detailName String
   total      Int

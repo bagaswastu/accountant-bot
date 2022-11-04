@@ -280,4 +280,46 @@ bot.command('create_category', async (ctx) => {
   }
 });
 
+/**
+ * See detail category and detail associated with it.
+ *
+ * Matches:
+ *  /category_{categoryId}
+ * Example:
+ *  /category_aqtMtd9Tw0xZ
+ */
+bot.on(':text').hears(/\/category_(.+)/, async (ctx) => {
+  const categoryId = ctx.match[1];
+
+  const category = await prisma.category.findUnique({
+    where: {
+      id: categoryId,
+    },
+    include: {
+      Detail: true,
+    },
+  });
+
+  if (!category) {
+    throw Error('Category not found');
+  }
+
+  const detailsStr = category.Detail.map((detail) => `➣ ${detail.name}`).join(
+    '\n'
+  );
+
+  await ctx.reply(
+    `
+*Category:* ${category.name}
+${detailsStr.length > 0 ? `*Details:*\n${detailsStr}` : ''}
+
+/delete\\_category\\_${
+      category.id
+    } to delete this category and remove all related detail
+/update\\_category\\_${category.id} to update this category
+`,
+    { parse_mode: 'MarkdownV2' }
+  );
+});
+
 bot.start();

@@ -17,6 +17,8 @@
   "dependencies": {
     "@grammyjs/hydrate": "^1.2.1",
     "@prisma/client": "^4.5.0",
+    "chrono-node": "^2.4.1",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "grammy": "^1.11.2",
     "init": "^0.1.2"

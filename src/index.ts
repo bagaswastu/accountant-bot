@@ -1,20 +1,38 @@
 import { customAlphabet } from 'nanoid';
 import { hydrate, HydrateFlavor } from '@grammyjs/hydrate';
-import { Detail, PrismaClient } from '@prisma/client';
+import { Category, Detail, PrismaClient } from '@prisma/client';
 import * as chrono from 'chrono-node';
 import { formatRelative } from 'date-fns';
 import * as dotenv from 'dotenv';
-import { Bot, Context } from 'grammy';
+import { Bot, Context, session } from 'grammy';
 import { formatRupiah } from './utils';
+import {
+  Conversation,
+  ConversationFlavor,
+  conversations,
+  createConversation,
+} from '@grammyjs/conversations';
 
 dotenv.config();
+const prisma = new PrismaClient();
 const nanoid = customAlphabet(
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
   12
 );
-const bot = new Bot<HydrateFlavor<Context>>(process.env.BOT_TOKEN!);
-const prisma = new PrismaClient();
 
+type CustomContext = Context & ConversationFlavor;
+type CustomConversation = Conversation<CustomContext>;
+
+const bot = new Bot<HydrateFlavor<CustomContext>>(process.env.BOT_TOKEN!);
+
+bot.use(
+  session({
+    initial() {
+      return {};
+    },
+  })
+);
+bot.use(conversations());
 bot.use(hydrate());
 
 // loading middleware
@@ -320,6 +338,69 @@ ${detailsStr.length > 0 ? `*Details:*\n${detailsStr}` : ''}
 `,
     { parse_mode: 'MarkdownV2' }
   );
+});
+
+let selectedCategory: Category | null = null;
+
+/**
+ * Update category name with conversation.
+ */
+async function updateCategory(
+  conversation: CustomConversation,
+  ctx: CustomContext
+) {
+  if (!selectedCategory) return;
+  await ctx.reply(
+    `You are about to change category *${selectedCategory.name}*`,
+    { parse_mode: 'MarkdownV2' }
+  );
+  await ctx.reply(`
+Please provide new category name:
+
+Type /cancel to cancel`);
+  const newCategoryName = await conversation.form.text();
+
+  if (newCategoryName === '/cancel') {
+    throw Error('Canceled');
+    return;
+  }
+
+  await prisma.category.update({
+    where: {
+      id: selectedCategory.id,
+    },
+    data: {
+      name: newCategoryName,
+    },
+  });
+
+  await ctx.reply(
+    `Category *${selectedCategory.name}* is now *${newCategoryName}*`,
+    {
+      parse_mode: 'MarkdownV2',
+    }
+  );
+  selectedCategory = null;
+}
+
+bot.use(createConversation(updateCategory));
+
+bot.on(':text').hears(/\/update_category_(.+)/, async (ctx) => {
+  const categoryId = ctx.match[1];
+
+  const category = await prisma.category.findUnique({
+    where: {
+      id: categoryId,
+    },
+  });
+
+  if (!category) {
+    throw Error('Category not found');
+  }
+
+  selectedCategory = category;
+
+  await ctx.conversation.enter('updateCategory');
 });
 
 bot.start();

@@ -95,7 +95,7 @@ ${timezone}
  * Example:
  *   15k, sprite, today
  */
-bot.on(':text').hears(/(\d+)(k?), ?(.+), ?(.+)?/, async (ctx) => {
+bot.on(':text').hears(/(\d+)(k?), ?(.+),? ?(.+)?/, async (ctx) => {
   let [_, total, k, detailName, naturalDate] = ctx.match;
 
   if (k) {
@@ -117,22 +117,11 @@ bot.on(':text').hears(/(\d+)(k?), ?(.+), ?(.+)?/, async (ctx) => {
     },
   });
 
-  // create detail with uncategorized category if detail is not found
+  // create detail with null category if detail is not found
   if (!detail) {
-    const uncategorized = await prisma.category.findFirst({
-      where: {
-        name: 'uncategorized',
-      },
-    });
-
-    if (!uncategorized) {
-      throw Error('Uncategorized category not found');
-    }
-
     detail = await prisma.detail.create({
       data: {
         name: detailName,
-        categoryId: uncategorized.id,
       },
     });
   }
@@ -148,7 +137,7 @@ bot.on(':text').hears(/(\d+)(k?), ?(.+), ?(.+)?/, async (ctx) => {
     include: {
       detail: {
         include: {
-          category: true,
+          Category: true,
         },
       },
     },
@@ -162,7 +151,9 @@ bot.on(':text').hears(/(\d+)(k?), ?(.+), ?(.+)?/, async (ctx) => {
 
   await ctx.reply(
     `
-You spent *${parsedTotal}* on *${expense.detail.category.name}*\\.
+You spent *${parsedTotal}* on *${
+      expense.detail.Category?.name ?? 'uncategorized'
+    }*\\.
   
 📅 *Date:* ${naturalDateOnly}
 📝 *Detail:* ${expense.detail.name}
@@ -170,7 +161,7 @@ You spent *${parsedTotal}* on *${expense.detail.category.name}*\\.
     { parse_mode: 'MarkdownV2' }
   );
 
-  if (expense.detail.category.name === 'uncategorized') {
+  if (!expense.detail.Category) {
     await ctx.reply(
       `
 This expense is uncategorized\\. Please categorize it by using \\= sign\\.

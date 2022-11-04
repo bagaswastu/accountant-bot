@@ -14,10 +14,10 @@ model Category {
 }
 
 model Detail {
-  name       String @id
-  categoryId String
+  name       String  @id
+  categoryId String?
 
-  category Category  @relation(fields: [categoryId], references: [id])
+  Category Category? @relation(fields: [categoryId], references: [id])
   Expense  Expense[]
 }
 

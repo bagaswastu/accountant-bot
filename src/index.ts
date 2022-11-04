@@ -5,7 +5,7 @@ import {
   createConversation,
 } from '@grammyjs/conversations';
 import { hydrate, HydrateFlavor } from '@grammyjs/hydrate';
-import { Category, Detail, PrismaClient } from '@prisma/client';
+import { Category, Detail, Expense, PrismaClient } from '@prisma/client';
 import * as chrono from 'chrono-node';
 import { format } from 'date-fns';
 import * as dotenv from 'dotenv';
@@ -208,11 +208,68 @@ bot.on(':text').hears(/^\/expense_(.+)$/, async (ctx) => {
 📅 *Date:* ${dateTimeParsed}
 🏷 *Category*: ${expense.detail.Category?.name || 'uncategorized'}
 
-/edit\\_expense\\_${expense.id} to edit this expense
 /delete\\_expense\\_${expense.id} to delete this expense
   `,
     { parse_mode: 'MarkdownV2' }
   );
+});
+
+/**
+ * Delete expense with confirmation.
+ */
+let selectedExpense: Expense | null = null;
+
+async function deleteExpense(
+  conversation: CustomConversation,
+  ctx: CustomContext
+) {
+  if (!selectedExpense) return;
+  await ctx.reply(
+    `You are about to delete expense with detail *${selectedExpense.detailName}*`,
+    { parse_mode: 'MarkdownV2' }
+  );
+  await ctx.reply(`
+Are you sure? Type /yes to delete or /cancel to cancel`);
+  const confirmation = await conversation.form.text();
+
+  if (confirmation === '/cancel') {
+    throw Error('Canceled');
+  }
+
+  if (confirmation === '/yes') {
+    await prisma.expense.delete({
+      where: {
+        id: selectedExpense.id,
+      },
+    });
+    await ctx.reply(
+      `Expense with detail *${selectedExpense.detailName}* deleted`,
+      {
+        parse_mode: 'MarkdownV2',
+      }
+    );
+    selectedExpense = null;
+  }
+}
+
+bot.use(createConversation(deleteExpense));
+
+bot.on(':text').hears(/\/delete_expense_(.+)/, async (ctx) => {
+  const expenseId = ctx.match[1];
+
+  const expense = await prisma.expense.findUnique({
+    where: {
+      id: expenseId,
+    },
+  });
+
+  if (!expense) {
+    throw Error('Expense not found');
+  }
+
+  selectedExpense = expense;
+
+  await ctx.conversation.enter('deleteExpense');
 });
 
 /**

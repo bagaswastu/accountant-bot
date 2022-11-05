@@ -105,7 +105,7 @@ ${timezone}
  * Example:
  *   15k, sprite, today
  */
-bot.on(':text').hears(/(\d+)(k?), ?(.+),? ?(.+)?/, async (ctx) => {
+bot.on(':text').hears(/(\d+)(k?), ?([^,]+),? ?([^,]+)?/, async (ctx) => {
   let [_, total, k, detailName, naturalDate] = ctx.match;
 
   if (k) {

@@ -170,8 +170,10 @@ Sucessfully added *${detail.name}* for *${parsedTotal}* to the expense list on *
     await ctx.reply(
       `
 This expense is uncategorized\\. Please categorize it by using \\= sign\\.
+*Example:* ${expense.detail.name} \\= food
 
-*Example:* ${expense.detail.name} \\= food`,
+You can see the list of categories by using /list\\_category command\\.
+`,
       {
         parse_mode: 'MarkdownV2',
       }

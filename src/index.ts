@@ -213,7 +213,7 @@ bot.on(':text').hears(/^\/expense_(.+)$/, async (ctx) => {
 
   await ctx.reply(
     `
-*${expense.detail.name}* for *${parsedTotal}*\\.
+*${expense.detail.name}* for *${parsedTotal}*\\
 
 📅 *Date:* ${dateTimeParsed}
 🏷 *Category*: ${expense.detail.Category?.name || 'uncategorized'}

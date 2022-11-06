@@ -122,6 +122,10 @@ bot.on(':text').hears(/(\d+)(k?), ?([^,]+),? ?([^,]+)?/, async (ctx) => {
   // parse date
   const date = chrono.parseDate(naturalDate, new Date(), { forwardDate: true });
 
+  if (!date) {
+    throw new Error('Please provide a valid date');
+  }
+
   // check if detail is already on database
   let detail: Detail | null;
   detail = await prisma.detail.findUnique({

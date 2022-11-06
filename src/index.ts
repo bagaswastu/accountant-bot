@@ -18,9 +18,10 @@ import {
   subDays,
 } from 'date-fns';
 import * as dotenv from 'dotenv';
-import { Bot, Context, session } from 'grammy';
+import { Bot, Context, session, webhookCallback } from 'grammy';
 import { customAlphabet } from 'nanoid';
 import { formatRupiah } from './utils';
+import express from 'express';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -722,4 +723,18 @@ ${expensesStr}
   );
 });
 
-bot.start();
+if (process.env.NODE_ENV === 'production') {
+  const domain = String(process.env.DOMAIN);
+  const token = String(process.env.BOT_TOKEN);
+
+  const app = express();
+
+  app.use(express.json());
+  app.use(`/${token}`, webhookCallback(bot, 'express'));
+
+  app.listen(Number(process.env.PORT), async () => {
+    await bot.api.setWebhook(`https://${domain}/${token}`);
+  });
+} else {
+  bot.start();
+}

@@ -109,6 +109,8 @@ ${timezone}
 bot.on(':text').hears(/(\d+)(k?), ?([^,]+),? ?([^,]+)?/, async (ctx) => {
   let [_, total, k, detailName, naturalDate] = ctx.match;
 
+  detailName = detailName.trim().toLowerCase();
+
   if (k) {
     total = total + '000';
   }
@@ -375,12 +377,14 @@ ${categoriesStr}
  *  /create_category food
  */
 bot.command('create_category', async (ctx) => {
-  const categoryName = ctx.match;
+  let categoryName = ctx.match;
 
   if (!categoryName) {
     await ctx.reply('Please provide category name');
     return;
   }
+
+  categoryName = categoryName.trim().toLowerCase();
 
   try {
     const category = await prisma.category.create({
@@ -564,7 +568,9 @@ bot.on(':text').hears(/\/delete_category_(.+)/, async (ctx) => {
  *  /report today
  */
 bot.command('report', async (ctx) => {
-  const rangeString = ctx.match;
+  let rangeString = ctx.match;
+
+  rangeString = rangeString.trim().toLowerCase();
 
   // check if range is valid
   if (

@@ -4,20 +4,20 @@ import prisma from '../lib/prisma';
 import { CustomContext, CustomConversation } from '../lib/types';
 import { nanoid } from '../lib/utils';
 
-export const lists = new Composer<CustomContext>();
+export const composer = new Composer<CustomContext>();
 
-async function createCategory(
+async function addCategory(
   conversation: CustomConversation,
   ctx: CustomContext
 ) {
+  await ctx.reply(`What is the name of the category?`);
   while (true) {
-    await ctx.reply(`What is the name of the category?`);
     const name = await conversation.form.text();
 
     // check category name using regex
     const regex = /^[\w\s]+$/;
     if (!regex.test(name)) {
-      await ctx.reply(`❌ Category name must be alphanumeric`);
+      await ctx.reply(`Hey, the category name can only contain alphanumeric characters and spaces. Let's pick another name:`);
       continue;
     }
 
@@ -29,7 +29,7 @@ async function createCategory(
     });
 
     if (category) {
-      await ctx.reply(`❌ ${name} category already exists`);
+      await ctx.reply(`This category name already exists. Let's pick another name:`);
       continue;
     }
 
@@ -41,16 +41,16 @@ async function createCategory(
       },
     });
 
-    await ctx.reply(`✅ ${category.name} category created`);
+    await ctx.reply(`OK, I've added ${category.name} category to the database.`);
     break;
   }
 }
 
-lists.use(createConversation(createCategory));
+composer.use(createConversation(addCategory));
 
 /**
  * Create category (conversation)
  */
-lists.command('create_category', async (ctx) => {
-  await ctx.conversation.enter('createCategory');
+composer.command('addcategory', async (ctx) => {
+  await ctx.conversation.enter('addCategory');
 });

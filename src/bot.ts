@@ -1,9 +1,10 @@
 import { conversations } from '@grammyjs/conversations';
 import { hydrate } from '@grammyjs/hydrate';
 import { Bot, session } from 'grammy';
-import { composer as start } from './commands/start';
 import { CustomContext } from './lib/types';
 import { lists as auth } from './misc/auth';
+import { composer as start } from './commands/start';
+import { composer as createExpense} from './global/create-expense';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -18,6 +19,15 @@ bot.use(
 bot.use(conversations());
 bot.use(hydrate());
 
+bot.use(auth);
+bot.use(start);
+bot.use(createExpense);
+
+bot.catch((err) => {
+  err.ctx.reply(err.message);
+  console.error(err);
+});
+
 // Always exit any conversation when the user sends /cancel
 bot.command('cancel', async (ctx) => {
   const conversations = await ctx.conversation.active();
@@ -27,16 +37,6 @@ bot.command('cancel', async (ctx) => {
   await ctx.reply('Okay, cancelled that.');
 });
 
-bot.use(auth);
-bot.use(start);
-
-// on error
-bot.use(async (ctx, next) => {
-  next().catch((err) => {
-    console.error(err);
-    ctx.reply(err.message);
-  });
-});
 
 // unknown command
 bot.on('message', async (ctx) => {

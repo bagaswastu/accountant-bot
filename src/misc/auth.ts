@@ -7,7 +7,7 @@ lists.use(async (ctx, next) => {
   const userIds = process.env.LIST_USER_ID?.split(' ');
 
   if (!userIds?.includes(ctx.from?.id.toString()!)) {
-    ctx.reply('Unauthorized');
+    ctx.reply(`Sorry, you can't access this bot.`);
     return;
   }
 

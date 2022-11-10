@@ -1,9 +1,10 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import { webhookCallback } from 'grammy';
-import * as dotenv from 'dotenv';
 import { bot } from './bot';
 
-dotenv.config();
 const domain = String(process.env.DOMAIN);
 const token = String(process.env.BOT_TOKEN);
 

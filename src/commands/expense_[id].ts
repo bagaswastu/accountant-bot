@@ -45,7 +45,7 @@ Here are the details of the expense:
 - Total: ${parsedTotal}
 - Date: ${dateTimeParsed}
 - Category: ${expense.detail.Category?.name || 'uncategorized'}
-/delete_expense${expense.id}
+/delete_expense_${expense.id}
     `,
   );
 });

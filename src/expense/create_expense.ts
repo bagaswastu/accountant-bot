@@ -76,9 +76,8 @@ lists.on(':text').hears(/(\d+)(k?), ?([\w\s]+)?,? ?([\w\s]+)?/, async (ctx) => {
 
   await ctx.reply(
     `
-  Sucessfully added *${detail.name}* for *${parsedTotal}* to the expense list on *${dateTimeParsed}*\\.
-  
-  /expense\\_${expense.id} to see more detail
+Sucessfully added *${detail.name}* for *${parsedTotal}* to the expense list on *${dateTimeParsed}*\\.
+/expense\\_${expense.id}
     `,
     { parse_mode: 'MarkdownV2' }
   );

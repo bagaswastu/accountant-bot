@@ -40,11 +40,11 @@ lists.on(':text').hears(/^\/expense_(.+)$/, async (ctx) => {
 
   await ctx.reply(
     `
-  *${expense.detail.name}* for *${parsedTotal}*\\
-  📅 ${dateTimeParsed}
-  🏷 ${expense.detail.Category?.name || 'uncategorized'}
-  
-  /delete\\_expense\\_${expense.id}
+${expense.detail.name}\\
+\\- Total: ${parsedTotal}
+\\- Date: ${dateTimeParsed}
+\\- Category: ${expense.detail.Category?.name || 'uncategorized'}
+/delete\\_expense\\_${expense.id}
     `,
     { parse_mode: 'MarkdownV2' }
   );

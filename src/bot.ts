@@ -2,7 +2,7 @@ import { conversations } from '@grammyjs/conversations';
 import { hydrate } from '@grammyjs/hydrate';
 import { Bot, session } from 'grammy';
 import { CustomContext } from './lib/types';
-import { lists as auth } from './misc/auth';
+import { lists as auth } from './middleware/auth';
 import { composer as start } from './commands/start';
 import { composer as createExpense } from './global/create-expense';
 import { composer as categorize } from './global/categorize';

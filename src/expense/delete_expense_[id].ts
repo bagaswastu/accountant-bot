@@ -25,10 +25,6 @@ export const lists = new Composer<CustomContext>();
  Are you sure? Type /yes to delete or /cancel to cancel`);
    const confirmation = await conversation.form.text();
  
-   if (confirmation === '/cancel') {
-     throw Error('Canceled');
-   }
- 
    if (confirmation === '/yes') {
      await prisma.expense.delete({
        where: {

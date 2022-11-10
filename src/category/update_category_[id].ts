@@ -21,15 +21,8 @@ async function updateCategory(
     { parse_mode: 'MarkdownV2' }
   );
   await ctx.reply(`
-Please provide new category name:
-
-Type /cancel to cancel`);
+Please provide new category name:`);
   const newCategoryName = await conversation.form.text();
-
-  if (newCategoryName === '/cancel') {
-    throw Error('Canceled');
-    return;
-  }
 
   await prisma.category.update({
     where: {

@@ -11,11 +11,11 @@ export const lists = new Composer<CustomContext>();
  * List Expense command.
  *
  * Matches:
- *  /list_expense {naturalDate}
+ *  /expenses {naturalDate}
  * Example:
- *  /list_expense 1 week ago
+ *  /expenses 1 week ago
  */
-lists.command('list_expense', async (ctx) => {
+lists.command('expenses', async (ctx) => {
   const naturalDate = ctx.match;
 
   const date = chrono.parseDate(naturalDate);
@@ -47,9 +47,9 @@ lists.command('list_expense', async (ctx) => {
   const expensesStr = expenses
     .map(
       (expense) =>
-        `➣ ${expense.detailName} \\- /expense\\_${
+        `\\> ${expense.detailName} \\- ${formatRupiah(expense.total).replace('.', '\\.')}\n   /expense\\_${
           expense.id
-        }\n     *${formatRupiah(expense.total).replace('.', '\\.')}*`
+        }`
     )
     .join('\n');
   const totalExpenses = expenses.reduce(
@@ -63,10 +63,10 @@ lists.command('list_expense', async (ctx) => {
   );
   await ctx.reply(
     `
-  *${formattedDate} expenses:*
-  ${expensesStr}
-  
-  *Total: ${formattedTotalExpenses}*
+*${formattedDate} Expenses:*
+${expensesStr}
+
+*Total: ${formattedTotalExpenses}*
   `,
     {
       parse_mode: 'MarkdownV2',

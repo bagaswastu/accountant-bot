@@ -29,16 +29,17 @@ lists.on(':text').hears(/\/category_(.+)/, async (ctx) => {
     throw Error('Category not found');
   }
 
-  const detailsStr = category.Detail.map((detail) => `➣ ${detail.name}`).join(
+  const detailsStr = category.Detail.map((detail) => `\\- ${detail.name}`).join(
     '\n'
   );
 
   await ctx.reply(
     `
-  *Category:* ${category.name}
-  ${detailsStr.length > 0 ? `*Details:*\n${detailsStr}\n` : ''}
-  /delete\\_category\\_${category.id} to delete this category
-  /update\\_category\\_${category.id} to update this category
+*Detail Category:* 
+${category.name}
+${detailsStr.length > 0 ? `\n*Related Details:*\n${detailsStr}\n` : ''}
+/delete\\_category\\_${category.id}
+/update\\_category\\_${category.id}
   `,
     { parse_mode: 'MarkdownV2' }
   );

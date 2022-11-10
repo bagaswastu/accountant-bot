@@ -34,10 +34,7 @@ Please provide new category name:`);
   });
 
   await ctx.reply(
-    `Category *${selectedCategory.name}* is now *${newCategoryName}*`,
-    {
-      parse_mode: 'MarkdownV2',
-    }
+    `✅ ${selectedCategory.name} category is now ${newCategoryName}`,
   );
   selectedCategory = null;
 }

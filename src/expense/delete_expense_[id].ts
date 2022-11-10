@@ -32,10 +32,7 @@ export const lists = new Composer<CustomContext>();
        },
      });
      await ctx.reply(
-       `Expense with detail *${selectedExpense.detailName}* deleted`,
-       {
-         parse_mode: 'MarkdownV2',
-       }
+       `✅ Expense with detail ${selectedExpense.detailName} deleted`,
      );
      selectedExpense = null;
    }

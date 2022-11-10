@@ -16,7 +16,7 @@ export const lists = new Composer<CustomContext>();
  * Example:
  *   15k, sprite, today
  */
-lists.on(':text').hears(/(\d+)(k?), ?([^,]+),? ?([^,]+)?/, async (ctx) => {
+lists.on(':text').hears(/(\d+)(k?), ?([\w\s]+)?,? ?([\w\s]+)?/, async (ctx) => {
   let [_, total, k, detailName, naturalDate] = ctx.match;
 
   detailName = detailName.trim().toLowerCase();

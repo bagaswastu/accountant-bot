@@ -12,7 +12,7 @@ export const lists = new Composer<CustomContext>();
  * Example:
  *  sprite = consumption
  */
-lists.on(':text').hears(/(.+) ?= ?(.+)/, async (ctx) => {
+lists.on(':text').hears(/([\w\s]+) = ([\w\s]+)/, async (ctx) => {
   let [_, detailName, categoryName] = ctx.match;
 
   detailName = detailName.trim().toLowerCase();
@@ -55,7 +55,5 @@ lists.on(':text').hears(/(.+) ?= ?(.+)/, async (ctx) => {
     },
   });
 
-  await ctx.reply(`*${detail.name}* is now categorized as *${category.name}*`, {
-    parse_mode: 'MarkdownV2',
-  });
+  await ctx.reply(`✅ ${detail.name} is now categorized as ${category.name}`);
 });

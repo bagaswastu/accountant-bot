@@ -29,9 +29,7 @@ let selectedCategory: Category | null = null;
           id: selectedCategory.id,
         },
       });
-      await ctx.reply(`Category *${selectedCategory.name}* deleted`, {
-        parse_mode: 'MarkdownV2',
-      });
+      await ctx.reply(`✅ ${selectedCategory.name} category deleted`);
       selectedCategory = null;
     }
   }

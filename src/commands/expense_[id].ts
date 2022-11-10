@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 import { CustomContext } from '../lib/types';
 import { formatRupiah } from '../lib/utils';
 
-export const lists = new Composer<CustomContext>();
+export const composer = new Composer<CustomContext>();
 
 /**
  * Detail expense.
@@ -14,7 +14,7 @@ export const lists = new Composer<CustomContext>();
  * Example:
  *  /expense_tb8M8gB5nWPA
  */
-lists.on(':text').hears(/^\/expense_(.+)$/, async (ctx) => {
+composer.on(':text').hears(/^\/expense_(.+)$/, async (ctx) => {
   const id = ctx.match[1];
 
   const expense = await prisma.expense.findUnique({
@@ -31,21 +31,21 @@ lists.on(':text').hears(/^\/expense_(.+)$/, async (ctx) => {
   });
 
   if (!expense) {
-    await ctx.reply('Expense not found');
+    await ctx.reply(`I can't find expense with id ${id} in the database.`);
     return;
   }
 
-  const dateTimeParsed = format(expense.date, 'dd\\-MM\\-yyyy');
-  const parsedTotal = formatRupiah(expense.total).replace('.', '\\.');
+  const dateTimeParsed = format(expense.date, 'eeee, dd/MM/yyyy');
+  const parsedTotal = formatRupiah(expense.total);
 
   await ctx.reply(
     `
-${expense.detail.name}\\
-\\- Total: ${parsedTotal}
-\\- Date: ${dateTimeParsed}
-\\- Category: ${expense.detail.Category?.name || 'uncategorized'}
-/delete\\_expense\\_${expense.id}
+Here are the details of the expense:
+- Detail: ${expense.detail.name}
+- Total: ${parsedTotal}
+- Date: ${dateTimeParsed}
+- Category: ${expense.detail.Category?.name || 'uncategorized'}
+/delete_expense${expense.id}
     `,
-    { parse_mode: 'MarkdownV2' }
   );
 });

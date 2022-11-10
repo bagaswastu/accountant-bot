@@ -7,6 +7,7 @@ import { composer as start } from './commands/start';
 import { composer as createExpense } from './global/create-expense';
 import { composer as categorize } from './global/categorize';
 import { composer as addCategory } from './commands/addcategory';
+import { composer as detailExpense } from './commands/expense_[id]';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -26,6 +27,7 @@ bot.use(start);
 bot.use(createExpense);
 bot.use(categorize);
 bot.use(addCategory);
+bot.use(detailExpense);
 
 bot.catch((err) => {
   err.ctx.reply(err.message);

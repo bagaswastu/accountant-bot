@@ -14,7 +14,7 @@ const successMessage = (
   total: string,
   dateTimeParsed: string
 ) => `
-Noted. Added <b>${detailName}</b> as a expense for a total of <b>${total}</b> on <b>${dateTimeParsed}</b>.
+Noted. Added <b>${detailName}</b> to the expense list with a total of <b>${total}</b> on <b>${dateTimeParsed}</b>.
 /expense_${expenseId}`;
 
 const noCategoryMessage = (detailName: string) => `

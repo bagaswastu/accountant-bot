@@ -2,7 +2,7 @@ import { Composer } from 'grammy';
 import prisma from '../lib/prisma';
 import { CustomContext } from '../lib/types';
 
-export const lists = new Composer<CustomContext>();
+export const composer = new Composer<CustomContext>();
 
 /**
  * Categorize an detail expense. If detail not found, then create a new detail.
@@ -12,7 +12,7 @@ export const lists = new Composer<CustomContext>();
  * Example:
  *  sprite = consumption
  */
-lists.on(':text').hears(/([\w\s]+) = ([\w\s]+)/, async (ctx) => {
+composer.on(':text').hears(/([\w\s]+) = ([\w\s]+)/, async (ctx) => {
   let [_, detailName, categoryName] = ctx.match;
 
   detailName = detailName.trim().toLowerCase();
@@ -30,9 +30,12 @@ lists.on(':text').hears(/([\w\s]+) = ([\w\s]+)/, async (ctx) => {
     },
   });
 
-  // if category is not found, then throw error
+  // if category is not found
   if (!category) {
-    throw Error(`Category ${categoryName} not found`);
+    await ctx.reply(`
+It seems that ${categoryName} is not on category list. Create first by calling /addcategory.
+    `);
+    return;
   }
 
   // if detail is not found, then create detail
@@ -55,5 +58,7 @@ lists.on(':text').hears(/([\w\s]+) = ([\w\s]+)/, async (ctx) => {
     },
   });
 
-  await ctx.reply(`✅ ${detail.name} is now categorized as ${category.name}`);
+  await ctx.reply(
+    `Okay, I'll now categorize ${detail.name} as ${category.name} category.`
+  );
 });

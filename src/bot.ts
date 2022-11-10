@@ -4,7 +4,8 @@ import { Bot, session } from 'grammy';
 import { CustomContext } from './lib/types';
 import { lists as auth } from './misc/auth';
 import { composer as start } from './commands/start';
-import { composer as createExpense} from './global/create-expense';
+import { composer as createExpense } from './global/create-expense';
+import { composer as categorize } from './global/categorize';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -22,6 +23,7 @@ bot.use(hydrate());
 bot.use(auth);
 bot.use(start);
 bot.use(createExpense);
+bot.use(categorize);
 
 bot.catch((err) => {
   err.ctx.reply(err.message);
@@ -36,7 +38,6 @@ bot.command('cancel', async (ctx) => {
   await ctx.conversation.exit();
   await ctx.reply('Okay, cancelled that.');
 });
-
 
 // unknown command
 bot.on('message', async (ctx) => {

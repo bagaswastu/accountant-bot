@@ -1,6 +1,7 @@
 import { conversations } from '@grammyjs/conversations';
 import { hydrate } from '@grammyjs/hydrate';
 import { Bot, session } from 'grammy';
+import { composer as start } from './commands/start';
 import { CustomContext } from './lib/types';
 import { lists as auth } from './misc/auth';
 
@@ -17,8 +18,8 @@ bot.use(
 bot.use(conversations());
 bot.use(hydrate());
 
-// Always exit any conversation when user sends "nevermind"
-bot.hears('nevermind', async (ctx) => {
+// Always exit any conversation when the user sends /cancel
+bot.command('cancel', async (ctx) => {
   const conversations = await ctx.conversation.active();
   if (Object.keys(conversations).length === 0) return ctx.reply('Umm, what?');
 
@@ -27,6 +28,7 @@ bot.hears('nevermind', async (ctx) => {
 });
 
 bot.use(auth);
+bot.use(start);
 
 // on error
 bot.use(async (ctx, next) => {

@@ -8,7 +8,8 @@ import { composer as createExpense } from './global/create-expense';
 import { composer as categorize } from './global/categorize';
 import { composer as addCategory } from './commands/addcategory';
 import { composer as detailExpense } from './commands/expense_[id]';
-import {composer as deleteExpense} from './commands/delete_expense_[id]';
+import { composer as deleteExpense } from './commands/delete_expense_[id]';
+import { composer as detailCategory } from './commands/category_[id]';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -30,6 +31,7 @@ bot.use(categorize);
 bot.use(addCategory);
 bot.use(detailExpense);
 bot.use(deleteExpense);
+bot.use(detailCategory);
 
 bot.catch((err) => {
   err.ctx.reply(err.message);

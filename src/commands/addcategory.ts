@@ -41,7 +41,7 @@ async function addCategory(
       },
     });
 
-    await ctx.reply(`OK, I've added ${category.name} category to the database.`);
+    await ctx.reply(`OK, I've added ${category.name} category to the database.\n/category_${category.id}`);
     break;
   }
 }

@@ -47,6 +47,7 @@ composer.on(':text').hears(/\/delete_expense_(.+)/, async (ctx) => {
 
   if (expense === null) {
     ctx.reply(`I can't find expense with id ${expenseId} in the database.`);
+    return;
   }
 
   selectedExpense = expense;

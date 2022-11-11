@@ -10,6 +10,7 @@ import { composer as addCategory } from './commands/addcategory';
 import { composer as detailExpense } from './commands/expense_[id]';
 import { composer as deleteExpense } from './commands/delete_expense_[id]';
 import { composer as detailCategory } from './commands/category_[id]';
+import { composer as deleteCategory } from './commands/delete_category_[id]';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -32,6 +33,7 @@ bot.use(addCategory);
 bot.use(detailExpense);
 bot.use(deleteExpense);
 bot.use(detailCategory);
+bot.use(deleteCategory);
 
 bot.catch((err) => {
   err.ctx.reply(err.message);

@@ -17,19 +17,23 @@ async function addCategory(
     // check category name using regex
     const regex = /^[\w\s]+$/;
     if (!regex.test(name)) {
-      await ctx.reply(`Hey, the category name can only contain alphanumeric characters and spaces. Let's pick another name:`);
+      await ctx.reply(
+        `Hey, the category name can only contain alphanumeric characters and spaces.\n\nLet's pick another name:`
+      );
       continue;
     }
 
     // check if category name already exists
     let category = await prisma.category.findUnique({
       where: {
-        name: name,
+        name: name.toLowerCase().trim(),
       },
     });
 
     if (category) {
-      await ctx.reply(`This category name already exists. Let's pick another name:`);
+      await ctx.reply(
+        `This category name already exists.\n\nLet's pick another name:`
+      );
       continue;
     }
 
@@ -41,7 +45,9 @@ async function addCategory(
       },
     });
 
-    await ctx.reply(`OK, I've added ${category.name} category to the database.\n/category_${category.id}`);
+    await ctx.reply(
+      `OK, I've added ${category.name} category to the database.\n/category_${category.id}`
+    );
     break;
   }
 }

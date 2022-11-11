@@ -34,14 +34,14 @@ async function updateCategory(
 
     let category = await prisma.category.findUnique({
       where: {
-        name: newCategoryName,
+        name: newCategoryName.toLowerCase().trim(),
       },
     });
 
     // check if category name already exists
     if (category) {
       await ctx.reply(
-        `This category name already exists. Let's pick another name:`
+        `This category name already exists.\n\nLet's pick another name:`
       );
       continue;
     }

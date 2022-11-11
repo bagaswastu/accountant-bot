@@ -15,7 +15,7 @@ async function getExpenses(
   while (true) {
     await ctx.reply(
       `On what date?\n\n<i>You can use natural language, e.g. "today", "last week", etc.</i>`,
-      {F
+      {
         parse_mode: 'HTML',
       }
     );
@@ -74,7 +74,7 @@ ${expensesStr}
     );
 
     await ctx.reply(
-      `Total of your expenses on ${formattedDate} is <b>${formattedTotalExpenses}.</b>`,
+      `Total of your expenses on ${formattedDate} is\n<b>${formattedTotalExpenses}.</b>`,
       { parse_mode: 'HTML' }
     );
     break;

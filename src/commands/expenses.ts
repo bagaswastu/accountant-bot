@@ -6,7 +6,7 @@ import { formatRupiah } from '../lib/utils';
 import { format } from 'date-fns';
 import { createConversation } from '@grammyjs/conversations';
 
-export const lists = new Composer<CustomContext>();
+export const composer = new Composer<CustomContext>();
 
 async function getExpenses(
   conversation: CustomConversation,
@@ -14,23 +14,20 @@ async function getExpenses(
 ) {
   while (true) {
     await ctx.reply(
-      `On what date?\n\n_You can use natural language, e\\.g\\. "today", "last week", etc_`, {
-        parse_mode: 'MarkdownV2',
-      });
+      `On what date?\n\n<i>You can use natural language, e.g. "today", "last week", etc.</i>`,
+      {F
+        parse_mode: 'HTML',
+      }
+    );
     const naturalDate = await conversation.form.text();
 
-
     // check input using regex
-    const regex = /^[\w\s]+$/;
-    if (!regex.test(naturalDate)) {
-      await ctx.reply(`❌ Please provide a valid date`);
-      continue;
-    }
-
     const date = chrono.parseDate(naturalDate);
 
     if (!date) {
-      await ctx.reply(`❌ Date can't be found on your input`);
+      await ctx.reply(
+        `Sorry, I can't get the date from your input. Mind to try again?`
+      );
       continue;
     }
 
@@ -48,18 +45,17 @@ async function getExpenses(
     });
 
     if (expenses.length === 0) {
-      await ctx.reply('No expenses found');
+      await ctx.reply(`You don't have any expenses on ${naturalDate}.`);
       break;
     }
 
-    const formattedDate = format(date, 'dd/MM/yyyy');
+    const formattedDate = format(date, 'eeee, dd MMMM yyyy');
     const expensesStr = expenses
       .map(
         (expense) =>
-          `${expense.detailName} \\- ${formatRupiah(expense.total).replace(
-            '.',
-            '\\.'
-          )}\n/expense\\_${expense.id}`
+          `${expense.detailName} - ${formatRupiah(expense.total)}\n/expense_${
+            expense.id
+          }`
       )
       .join('\n');
     const totalExpenses = expenses.reduce(
@@ -67,31 +63,29 @@ async function getExpenses(
       0
     );
 
-    const formattedTotalExpenses = formatRupiah(totalExpenses).replace(
-      '.',
-      '\\.'
-    );
+    const formattedTotalExpenses = formatRupiah(totalExpenses);
+    await ctx.reply(`Here is a list of your expenses on ${formattedDate}:`);
     await ctx.reply(
       `
-*${formattedDate} expenses:*
-
 ${expensesStr}
 
-*Total: ${formattedTotalExpenses}*
     `,
-      {
-        parse_mode: 'MarkdownV2',
-      }
+      { parse_mode: 'HTML' }
+    );
+
+    await ctx.reply(
+      `Total of your expenses on ${formattedDate} is <b>${formattedTotalExpenses}.</b>`,
+      { parse_mode: 'HTML' }
     );
     break;
   }
 }
 
-lists.use(createConversation(getExpenses));
+composer.use(createConversation(getExpenses));
 
 /**
  * List Expense command.
  */
-lists.command('expenses', async (ctx) => {
+composer.command('expenses', async (ctx) => {
   await ctx.conversation.enter('getExpenses');
 });

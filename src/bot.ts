@@ -15,6 +15,7 @@ import { composer as updateCategory } from './commands/update_category_[id]';
 import { composer as categories } from './commands/categories';
 import { composer as expenses } from './commands/expenses';
 import { composer as report } from './commands/report';
+import { composer as timezone } from './commands/timezone';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -42,6 +43,7 @@ bot.use(updateCategory);
 bot.use(expenses);
 bot.use(categories);
 bot.use(report);
+bot.use(timezone);
 
 bot.catch((err) => {
   err.ctx.reply(err.message);

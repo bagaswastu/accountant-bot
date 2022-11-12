@@ -3,29 +3,27 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:../data/data.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Type {
+  INCOME
+  EXPENSE
 }
 
 model Category {
-  id     String   @id
-  name   String   @unique
-  Detail Detail[]
+  id          String        @id
+  name        String
+  type        Type
+  Transaction Transaction[]
 }
 
-model Detail {
-  name       String  @id
-  categoryId String?
-
-  Category Category? @relation(fields: [categoryId], references: [id])
-  Expense  Expense[]
-}
-
-model Expense {
-  id         String   @id
-  date       DateTime
-  detailName String
-  total      Int
-
-  detail Detail @relation(fields: [detailName], references: [name])
+model Transaction {
+  id          String   @id
+  description String
+  amount      Float
+  dateTime    DateTime
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
 }

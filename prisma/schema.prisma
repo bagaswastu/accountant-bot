@@ -26,4 +26,5 @@ model Transaction {
   dateTime    DateTime
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  String
+  createdAt   DateTime @default(now())
 }

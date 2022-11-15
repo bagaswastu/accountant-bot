@@ -1,44 +1,41 @@
-# fly.toml file generated for accountant-wastu on 2022-11-05T20:35:28+07:00
+# fly.toml file generated for accountant-bot-wastu on 2022-11-15T11:48:08+07:00
 
-app = "accountant-wastu"
+app = "accountant-bot-wastu"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
+[deploy]
+release_command = "yarn prisma db push && yarn prisma db seed && yarn start"
+
+[env]
+
 [experimental]
-allowed_public_ports = []
-auto_rollback = true
+  allowed_public_ports = []
+  auto_rollback = true
 
 [[services]]
-http_checks = []
-internal_port = 80
-processes = ["app"]
-protocol = "tcp"
-script_checks = []
-[services.concurrency]
-hard_limit = 25
-soft_limit = 20
-type = "connections"
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
 
-[[services.ports]]
-force_https = true
-handlers = ["http"]
-port = 80
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
 
-[[services.ports]]
-handlers = ["tls", "http"]
-port = 443
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
 
-[[services.ports]]
-handlers = ["tls", "http"]
-port = 5222
-
-[[services.tcp_checks]]
-grace_period = "1s"
-interval = "15s"
-restart_limit = 0
-timeout = "2s"
-
-[mounts]
-source = "accountant_data"
-destination = "/data"
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"

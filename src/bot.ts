@@ -5,6 +5,7 @@ import { composer as createTransaction } from './commands/create-transaction';
 import { composer as undo } from './commands/undo';
 import { CustomContext, SessionData } from './lib/types';
 import { lists as auth } from './middleware/auth';
+import { composer as transactions } from './commands/transactions';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -15,15 +16,7 @@ function initial(): SessionData {
 bot.use(session({ initial }));
 bot.use(conversations());
 bot.use(hydrate());
-bot.use(createTransaction);
-
 bot.use(auth);
-bot.use(undo);
-
-bot.catch((err) => {
-  err.ctx.reply(err.message);
-  console.error(err);
-});
 
 // Always exit any conversation when the user sends /cancel
 bot.command('cancel', async (context) => {
@@ -34,6 +27,16 @@ bot.command('cancel', async (context) => {
   await context.conversation.exit();
   await context.reply('Okay, cancelled that.');
 });
+
+bot.use(createTransaction);
+bot.use(undo);
+bot.use(transactions);
+
+bot.catch((err) => {
+  err.ctx.reply(err.message);
+  console.error(err);
+});
+
 
 bot.on(':text', (context) => {
   if (context.session.pendingTransaction) {

@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon --exec ts-node -- ./src/server.ts",
-    "start": "ts-node --transpile-only src/server"
+    "build": "yarn rimraf ./build && tsc",
+    "start": "node build/src/server.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -15,6 +16,7 @@
     "@types/node": "^18.11.9",
     "nodemon": "^2.0.20",
     "prisma": "^4.6.1",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   },
@@ -22,7 +24,7 @@
     "@grammyjs/conversations": "^1.0.3",
     "@grammyjs/hydrate": "^1.2.1",
     "@grammyjs/menu": "^1.1.2",
-    "@prisma/client": "^4.5.0",
+    "@prisma/client": "^4.6.1",
     "chrono-node": "^2.4.1",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",

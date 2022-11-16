@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(`/${token}`, webhookCallback(bot, 'express'));
 
   app.listen(port, async () => {
-    console.log('port is 80: ' + port === '80');
+    console.log(`Server is running on port ${port}`);
     await bot.api.setWebhook(`https://${domain}/${token}`);
   });
 } else {

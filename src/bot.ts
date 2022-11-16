@@ -6,6 +6,7 @@ import { composer as undo } from './commands/undo';
 import { CustomContext, SessionData } from './lib/types';
 import { lists as auth } from './middleware/auth';
 import { composer as transactions } from './commands/transactions';
+import {composer as start} from './commands/start';
 
 if (process.env.BOT_TOKEN == null) throw new Error('BOT_TOKEN is missing.');
 export const bot = new Bot<CustomContext>(process.env.BOT_TOKEN!);
@@ -28,6 +29,7 @@ bot.command('cancel', async (context) => {
   await context.reply('Okay, cancelled that.');
 });
 
+bot.use(start);
 bot.use(createTransaction);
 bot.use(undo);
 bot.use(transactions);

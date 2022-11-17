@@ -54,6 +54,9 @@ async function getTransactions(
     include: {
       category: true,
     },
+    orderBy: {
+      dateTime: 'asc',
+    },
   });
 
   if (transactions.length === 0) {
@@ -79,13 +82,13 @@ ${transactions
   .map((trx) => {
     const sign = trx.category.type === Type.Income ? '+' : '-';
     const amountFormatted = formatRupiah(trx.amount, true);
-    return `${sign}${amountFormatted} - ${trx.description} (${
+    return `${sign}${amountFormatted} — ${trx.description} (${
       trx.category.name
     }) on ${format(trx.dateTime, 'HH:mm')}`;
   })
   .join('\n')}
 ---
-Total balance: ${formatRupiah(balance)}
+Total: ${formatRupiah(balance)}
   `);
 }
 

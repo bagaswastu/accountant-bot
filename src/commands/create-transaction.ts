@@ -74,7 +74,8 @@ composer.use(menu);
  *  - -105k groceries
  *  - 10k
  */
-const regex = /(\+|\-)?(?:\s+)?([\d.]+)(\w)?(?:\s+)?(.[^,]+)?(?:,(?:\s+)?(.+))?/;
+const regex =
+  /(\+|\-)?(?:\s+)?([\d,.]+)(\w)?(?:\s+)?(.[^,]+)?(?:,(?:\s+)?(.+))?/;
 
 composer.hears(regex, async (context) => {
   if (typeof context.match === 'string') return;
@@ -93,6 +94,8 @@ composer.hears(regex, async (context) => {
   const typeEnum = type === '+' ? Type.Income : Type.Expense ?? Type.Income;
 
   // unit conversion
+  amountStr = amountStr.replace('.', '');
+  amountStr = amountStr.replace(',', '');
   if (unit === 'k') {
     amountStr = (parseFloat(amountStr) * 1000).toString();
   } else if (unit === 'm') {

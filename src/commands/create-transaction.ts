@@ -74,7 +74,7 @@ composer.use(menu);
  *  - -105k groceries
  *  - 10k
  */
-const regex = /(\+|\-)?(?:\s+)?(\d+)(\w)?(?:\s+)?(.[^,]+)?(?:,(?:\s+)?(.+))?/;
+const regex = /(\+|\-)?(?:\s+)?([\d.]+)(\w)?(?:\s+)?(.[^,]+)?(?:,(?:\s+)?(.+))?/;
 
 composer.hears(regex, async (context) => {
   if (typeof context.match === 'string') return;
@@ -94,9 +94,9 @@ composer.hears(regex, async (context) => {
 
   // unit conversion
   if (unit === 'k') {
-    amountStr = amountStr + '000';
+    amountStr = (parseInt(amountStr) * 1000).toString();
   } else if (unit === 'm') {
-    amountStr = amountStr + '000000';
+    amountStr = (parseInt(amountStr) * 1000000).toString();
   }
 
   // if natural date is not found, then use current datetime

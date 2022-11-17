@@ -7,7 +7,7 @@ processes = []
 
 
 [deploy]
-release_command = "yarn prisma db push && yarn prisma db seed"
+release_command = "yarn prisma db push"
 
 [env]
 

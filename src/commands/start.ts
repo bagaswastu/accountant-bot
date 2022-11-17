@@ -9,7 +9,7 @@ To add new transaction, write:
 <code>{type?}{total}{unit?} {description}, {natural date?}</code> 
 example: 
 - <code>10k bakso, today</code>
-- <code>+100k monthly sallary</code>
+- <code>+100k monthly salary</code>
 - <code>15k bakmi</code>
 
 If you change your mind, you can call /undo command to remove the last transaction.

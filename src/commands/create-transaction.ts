@@ -94,9 +94,9 @@ composer.hears(regex, async (context) => {
 
   // unit conversion
   if (unit === 'k') {
-    amountStr = (parseInt(amountStr) * 1000).toString();
+    amountStr = (parseFloat(amountStr) * 1000).toString();
   } else if (unit === 'm') {
-    amountStr = (parseInt(amountStr) * 1000000).toString();
+    amountStr = (parseFloat(amountStr) * 1000000).toString();
   }
 
   // if natural date is not found, then use current datetime
@@ -118,7 +118,7 @@ composer.hears(regex, async (context) => {
 
   const pendingTransaction: Partial<Transaction> = {
     id: nanoid(),
-    amount: parseInt(amountStr),
+    amount: parseFloat(amountStr),
     description,
     dateTime,
   };

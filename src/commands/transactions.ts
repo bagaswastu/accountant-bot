@@ -50,6 +50,11 @@ async function getTransactions(
         gte: startDate,
         lt: endDate,
       },
+      category: {
+        id: {
+          not: '000-calibration', // exclude calibration transaction
+        },
+      },
     },
     include: {
       category: true,

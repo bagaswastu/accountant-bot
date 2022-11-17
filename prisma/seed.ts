@@ -57,7 +57,7 @@ async function main() {
         type: Type.Income,
       },
       {
-        id: nanoid(),
+        id: '000-calibration',
         name: '🔃 Calibration',
         type: Type.Income,
       },
